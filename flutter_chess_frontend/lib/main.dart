@@ -14,6 +14,8 @@ class ChessApp extends StatefulWidget {
   _ChessAppState createState() => _ChessAppState();
 }
 
+
+
 class _ChessAppState extends State<ChessApp> {
   // Aktueller Spielstand im FEN-Format
   String fen = "";
@@ -38,6 +40,8 @@ class _ChessAppState extends State<ChessApp> {
     loadBoard(); // Beim Start das Brett laden
   }
 
+
+
   // Holt das aktuelle Brett vom Backend
   Future<void> loadBoard() async {
     try {
@@ -61,6 +65,8 @@ class _ChessAppState extends State<ChessApp> {
     }
   }
 
+
+
   // Sendet einen Zug an das Backend
   Future<void> makeMove(String move) async {
     try {
@@ -72,6 +78,7 @@ class _ChessAppState extends State<ChessApp> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        
         setState(() {
           fen = data['fen'];
           statusMessage = "Zug erfolgreich: $move";
@@ -88,6 +95,8 @@ class _ChessAppState extends State<ChessApp> {
       });
     }
   }
+
+
 
   // Startet ein neues Spiel
   Future<void> newGame() async {
@@ -109,6 +118,8 @@ class _ChessAppState extends State<ChessApp> {
       });
     }
   }
+
+
 
   // Baut das UI der App
   @override
@@ -168,6 +179,8 @@ class _ChessAppState extends State<ChessApp> {
       ),
     );
   }
+
+
 
   // Baut das Schachbrett-Widget
   Widget buildBoard(String fen) {
