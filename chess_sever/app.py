@@ -8,10 +8,23 @@ app = Flask(__name__)
 CORS(app)  # Erlaubt Anfragen von anderen Domains (z.B. Flutter-Frontend)
 
 board = chess.Board()  # Erstellt ein neues Schachbrett (Startposition)
-stockfish = Stockfish(
-    path=r"C:\Users\duets\Projekts\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
-    parameters={"Threads": 2, "Minimum Thinking Time": 30}  # Engine-Parameter
-)
+
+# Startet ein neues Spiel (setzt das Brett zurück)
+@app.route("/new", methods=["POST"])
+def new_game():
+    global board
+    global stockfish
+    board = chess.Board()  # Neues Spiel starten (Startposition)
+    data = request.get_json()
+    skill_level = data.get("skillLevel", 10)  # Default = 10
+    stockfish = Stockfish(
+        path=r"C:\Users\josep\Projekte\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
+        parameters={"Threads": 2, "Minimum Thinking Time": 30, "Skill Level":skill_level}  # Engine-Parameter    
+    )
+    return jsonify({"status": "new game started"})
+
+
+
 
 # Gibt das aktuelle Brett als JSON zurück (FEN, Spielstatus, wer am Zug ist)
 @app.route("/board", methods=["GET"])
@@ -20,14 +33,17 @@ def get_board():
         "fen": board.fen(),
         "is_game_over": board.is_game_over(),
         "turn": "white" if board.turn else "black"
+
     })
+
+
 
 # Nimmt einen Zug entgegen, prüft ihn, führt ihn aus und ggf. auch den Stockfish-Zug
 @app.route("/move", methods=["POST"])
 def make_move():
     global board
     data = request.get_json()         # Holt die gesendeten Daten (JSON)
-    move = data.get("move")           # Extrahiert den Zug-String (z.B. "e2e4")
+    move = data.get("move")           # Extrahiert den Zug-String 
     try:
         chess_move = chess.Move.from_uci(move)   # Wandelt den String in ein Schach-Zug-Objekt um
         if chess_move in board.legal_moves:      # Prüft, ob der Zug erlaubt ist
@@ -49,12 +65,6 @@ def make_move():
         # Wenn ein Fehler auftritt (z.B. ungültiges Format)
         return jsonify({"status": "invalid move", "error": str(e)}), 400
 
-# Startet ein neues Spiel (setzt das Brett zurück)
-@app.route("/new", methods=["POST"])
-def new_game():
-    global board
-    board = chess.Board()  # Neues Spiel starten (Startposition)
-    return jsonify({"status": "new game started"})
 
 # Startet den Flask-Server im Debug-Modus
 if __name__ == "__main__":
