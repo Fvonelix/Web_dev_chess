@@ -4,10 +4,11 @@ import chess                  # python-chess Bibliothek für Spiellogik
 import chess.svg              # (Optional) Für SVG-Export, hier nicht genutzt
 from stockfish import Stockfish  # Für die Anbindung der Stockfish-Engine
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=r'C:\Users\duets\Projekts\Web_dev_chess\flutter_chess_frontend\build\web')
 CORS(app)  # Erlaubt Anfragen von anderen Domains (z.B. Flutter-Frontend)
 
 board = chess.Board()  # Erstellt ein neues Schachbrett (Startposition)
+
 
 # Startet ein neues Spiel (setzt das Brett zurück)
 @app.route("/new", methods=["POST"])
@@ -18,7 +19,7 @@ def new_game():
     data = request.get_json()
     skill_level = data.get("skillLevel", 10)  # Default = 10
     stockfish = Stockfish(
-        path=r"C:\Users\josep\Projekte\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
+        path=r"C:\Users\duets\Projekts\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
         parameters={"Threads": 2, "Minimum Thinking Time": 30, "Skill Level":skill_level}  # Engine-Parameter    
     )
     return jsonify({"status": "new game started"})
@@ -66,6 +67,20 @@ def make_move():
         return jsonify({"status": "invalid move", "error": str(e)}), 400
 
 
+
+from flask import send_from_directory
+
+@app.route('/')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
+
+
+
+
 # Startet den Flask-Server im Debug-Modus
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8000)
