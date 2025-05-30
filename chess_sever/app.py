@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS  # Für Cross-Origin Resource Sharing (Frontend-Backend-Kommunikation)
 import chess                  # python-chess Bibliothek für Spiellogik
-import chess.svg              # (Optional) Für SVG-Export, hier nicht genutzt
 from stockfish import Stockfish  # Für die Anbindung der Stockfish-Engine
+import os
 
-app = Flask(__name__, static_folder=r'C:\Users\duets\Projekts\Web_dev_chess\flutter_chess_frontend\build\web')
+app = Flask(
+    __name__,
+    static_folder=os.path.join(os.path.dirname(__file__), '..', 'flutter_chess_frontend', 'build', 'web')
+)
 CORS(app)  # Erlaubt Anfragen von anderen Domains (z.B. Flutter-Frontend)
 
 board = chess.Board()  # Erstellt ein neues Schachbrett (Startposition)
@@ -18,9 +21,10 @@ def new_game():
     board = chess.Board()  # Neues Spiel starten (Startposition)
     data = request.get_json()
     skill_level = data.get("skillLevel", 10)  # Default = 10
+    stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish", "stockfish", "stockfish-windows-x86-64-avx2.exe")
     stockfish = Stockfish(
-        path=r"C:\Users\duets\Projekts\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
-        parameters={"Threads": 2, "Minimum Thinking Time": 30, "Skill Level":skill_level}  # Engine-Parameter    
+        path=stockfish_path,
+        parameters={"Threads": 2, "Minimum Thinking Time": 30, "Skill Level": skill_level}
     )
     return jsonify({"status": "new game started"})
 
@@ -69,6 +73,7 @@ def make_move():
 
 
 from flask import send_from_directory
+import os
 
 @app.route('/')
 def serve_index():
