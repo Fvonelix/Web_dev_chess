@@ -139,19 +139,19 @@ class _ChessAppState extends State<ChessApp> {
               SizedBox(height: 20),
               // Verschiedene Buttons für neue Spiele mit unterschiedlichen Schwierigkeitsgraden
               ElevatedButton(
-                onPressed: () async { await newGame(5); },
+                onPressed: () async { await newGame(2); },
                 child: Text("Spiel starten Easy"),
               ),
               ElevatedButton(
-                onPressed: () async { await newGame(10); },
+                onPressed: () async { await newGame(4); },
                 child: Text("Spiel starten Mid"),
               ),
               ElevatedButton(
-                onPressed: () async { await newGame(15); },
+                onPressed: () async { await newGame(8); },
                 child: Text("Spiel starten Hard"),
               ),
               ElevatedButton(
-                onPressed: () async { await newGame(20); },
+                onPressed: () async { await newGame(16); },
                 child: Text("Spiel starten Very Hard"),
               ),
               SizedBox(height: 10),

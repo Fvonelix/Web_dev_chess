@@ -17,7 +17,7 @@ def new_game():
     global stockfish
     board = chess.Board()  # Neues Spiel starten (Startposition)
     data = request.get_json()
-    skill_level = data.get("skillLevel", 10)  # Default = 10
+    skill_level = data.get("skillLevel", 4)  # Default = 10
     stockfish = Stockfish(
         path=r"C:\Users\duets\Projekts\Web_dev_chess\chess_sever\stockfish\stockfish\stockfish-windows-x86-64-avx2.exe",  # Pfad zur Stockfish-Engine
         parameters={"Threads": 2, "Minimum Thinking Time": 30, "Skill Level":skill_level}  # Engine-Parameter    
